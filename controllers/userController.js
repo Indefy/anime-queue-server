@@ -1,7 +1,6 @@
 const User = require("../models/User");
 const jwt = require("jsonwebtoken");
 
-// Register a new user
 exports.registerUser = async (req, res) => {
 	try {
 		const { username, email, password } = req.body;
@@ -13,7 +12,6 @@ exports.registerUser = async (req, res) => {
 	}
 };
 
-// Login a user
 exports.loginUser = async (req, res) => {
 	try {
 		const { email, password } = req.body;
@@ -30,35 +28,29 @@ exports.loginUser = async (req, res) => {
 	}
 };
 
-// Get user favorites
 exports.getFavorites = async (req, res) => {
 	try {
-		const user = await User.findById(req.userId).populate("favorites");
-		if (!user) return res.status(404).json({ message: "User not found" });
+		const user = await User.findById(req.user.userId).populate("favorites");
 		res.json(user.favorites);
 	} catch (err) {
 		res.status(500).json({ message: err.message });
 	}
 };
 
-// Add anime to favorites
 exports.addFavorite = async (req, res) => {
 	try {
-		const user = await User.findById(req.userId);
-		if (!user) return res.status(404).json({ message: "User not found" });
-		user.favorites.push(req.params.animeId);
+		const user = await User.findById(req.user.userId);
+		user.favorites.push(req.body.animeId);
 		await user.save();
-		res.status(200).json(user.favorites);
+		res.status(201).json(user.favorites);
 	} catch (err) {
 		res.status(500).json({ message: err.message });
 	}
 };
 
-// Remove anime from favorites
 exports.removeFavorite = async (req, res) => {
 	try {
-		const user = await User.findById(req.userId);
-		if (!user) return res.status(404).json({ message: "User not found" });
+		const user = await User.findById(req.user.userId);
 		user.favorites.pull(req.params.animeId);
 		await user.save();
 		res.status(200).json(user.favorites);

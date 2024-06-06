@@ -1,19 +1,19 @@
 const jwt = require("jsonwebtoken");
 
-const authMiddleware = (req, res, next) => {
+const verifyToken = (req, res, next) => {
 	const authHeader = req.headers.authorization;
 	if (authHeader) {
 		const token = authHeader.split(" ")[1];
 		jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
 			if (err) {
-				return res.sendStatus(403);
+				return res.status(403).json({ message: "Token verification failed" });
 			}
-			req.userId = user.userId;
+			req.user = user;
 			next();
 		});
 	} else {
-		res.sendStatus(401);
+		res.status(401).json({ message: "Token is required" });
 	}
 };
 
-module.exports = authMiddleware;
+module.exports = { verifyToken };

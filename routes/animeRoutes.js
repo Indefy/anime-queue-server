@@ -7,11 +7,12 @@ const {
 	updateAnime,
 	deleteAnime,
 } = require("../controllers/animeController");
+const { verifyToken } = require("../middleware/authMiddleware");
 
 router.get("/", getAllAnime);
 router.get("/:id", getAnimeById);
-router.post("/", createAnime);
-router.put("/:id", updateAnime);
-router.delete("/:id", deleteAnime);
+router.post("/", verifyToken, createAnime);
+router.put("/:id", verifyToken, updateAnime);
+router.delete("/:id", verifyToken, deleteAnime);
 
 module.exports = router;

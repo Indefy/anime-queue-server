@@ -7,7 +7,7 @@ const {
 	addFavorite,
 	removeFavorite,
 } = require("../controllers/userController");
-const authMiddleware = require("../middleware/authMiddleware");
+const { verifyToken } = require("../middleware/authMiddleware");
 
 // Register route
 router.post("/register", registerUser);
@@ -15,9 +15,9 @@ router.post("/register", registerUser);
 // Login route
 router.post("/login", loginUser);
 
-// Favorite routes (secured with authMiddleware)
-router.get("/favorites", authMiddleware, getFavorites);
-router.post("/favorites/:animeId", authMiddleware, addFavorite);
-router.delete("/favorites/:animeId", authMiddleware, removeFavorite);
+// Favorites routes
+router.get("/favorites", verifyToken, getFavorites);
+router.post("/favorites", verifyToken, addFavorite);
+router.delete("/favorites/:animeId", verifyToken, removeFavorite);
 
 module.exports = router;
